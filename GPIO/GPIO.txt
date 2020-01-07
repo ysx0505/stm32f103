@@ -41,3 +41,45 @@ GPIOx->BSRR=GPIO_Pin_x;	    //输出为高电平
 GPIOx->BRR=GPIO_Pin_x;	    //输出低电平
 GPIOx->ODR ^=GPIO_Pin_x;    //输出反转状态
 
+## 位带操作
+下面的映射公式给出了别名区中的每个字是如何对应位带区的相应位的：
+bit_word_addr = bit_band_base + (byte_offset×32) + (bit_number×4)
+其中：
+bit_word_addr是别名存储器区中字的地址，它映射到某个目标位。
+bit_band_base是别名区的起始地址。
+byte_offset是包含目标位的字节在位段里的序号
+bit_number是目标位所在位置(0-31)
+
+实例：
+//SRAM 位带区:    0X2000 0000~0X2010 0000
+//SRAM 位带别名区:0X2200 0000~0X23FF FFFF
+//外设 位带区:    0X4000 0000~0X4010 0000
+//外设 位带别名区:0X4200 0000~0X43FF FFFF
+
+// 把“位带地址+位序号”转换成别名地址的宏
+#define BITBAND(addr, bitnum) ((addr & 0xF0000000)+0x02000000+((addr & 0x00FFFFFF)<<5)+(bitnum<<2)) 
+/*
+ *addr & 0xF0000000，取地址的高4位，看看是2还是4，用于区分SRAM和外设地址，
+ *如果是2，+0x02000000则=0X2200 0000，即是SRAM，如果是4，+0x02000000则=0X4200 0000，即是外设
+ *
+ *addr & 0x000FFFFFF，屏蔽掉高两位，相当于-0X2000 0000或者-0X4000 0000，结果表示偏移位带区多少个字节
+ *<<5  等于*8*4，因为位带区一个地址表示一个字节，一个字节有8个bit，一个bit可以膨胀成一个字，即4个字节
+ *<<2 等于*4，因为一个位可以膨胀成一个字，即4个字节
+ *
+ *分解成两条公式应该就是这样：
+ *SRAM位带别名地址
+ *AliasAddr= 0x22000000+((A-0x20000000)*8+n)*4 =0x22000000+ (A-0x20000000)*8*4 +n*4
+ *外设位带别名地址
+ *AliasAddr= 0x42000000+((A-0x40000000)*8+n)*4 =0x42000000+ (A-0x20000000)*8*4 +n*4
+ */
+ 
+// 把一个地址转换成一个指针
+#define MEM_ADDR(addr)  *((volatile unsigned long  *)(addr)) 
+// 把位带别名区地址转换成指针
+#define BIT_ADDR(addr, bitnum)   MEM_ADDR(BITBAND(addr, bitnum))   
+// GPIO ODR 和 IDR 寄存器地址映射 
+#define GPIOA_ODR_Addr    (GPIOA_BASE+12) //0x4001080C  GPIOA_BASE是GPIOA口的存储器映射地址，12是ODR寄存器的偏移量
+#define GPIOA_IDR_Addr    (GPIOA_BASE+8)  //0x40010808  GPIOA_BASE是GPIOA口的存储器映射地址，8是ODR寄存器的偏移量 
+// 单独操作 GPIO的某一个IO口，n(0,1,2...16),n表示具体是哪一个IO口
+#define PAout(n)   BIT_ADDR(GPIOA_ODR_Addr,n)  //输出   
+#define PAin(n)    BIT_ADDR(GPIOA_IDR_Addr,n)  //输入 
