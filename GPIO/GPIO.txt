@@ -1,7 +1,6 @@
 #GPIO库函数的使用
 
-##GPIO初始化流程及常用函数
-GPIO初始化流程
+## GPIO初始化流程
 GPIO_InitTypeDef GPIO_InitStructure;  //定义GPIO结构体
 RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE); //初始化GPIO外设时钟
 GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5; //选择要控制的引脚
@@ -9,7 +8,7 @@ GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //选择输出方式，GPIO_Mo
 GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;  //选择引脚速率
 GPIO_Init(GPIOB, &GPIO_InitStructure); //初始化GPIO
 
-GPIO常用函数
+## GPIO常用函数
 GPIO_DeInit(GPIOB); //GPIO反初始化，避免多次初始化导致初始化失败
 GPIO_AFIODeInit();  //GPIO复用功能反初始化
 GPIO_Init(GPIOB, &GPIO_InitStructure);  //初始化GPIO
@@ -31,7 +30,7 @@ GPIO_EventOutputCmd(ENABLE);  //启用或禁用事件输出
 GPIO_EXTILineConfig(GPIO_PortSource, GPIO_PinSource); //选择用作EXTI线的GPIO引脚
 GPIO_ETH_MediaInterfaceConfigGPIO_ETH_MediaInterface);  //选择以太网媒体接口
 
-ReadOutput和ReadInput的区别
+## ReadOutput和ReadInput的区别
 output:是读取从单片机内部输出到外部的电平，着重于单片机内部的设定，若引脚软件配置为1，则读回的值为1(即使外部将其拉低)
 input：读取从外部输入到单片机内部的电平，着重于外部输入电平，外部实际为1，则读回的值为1，反之为0
 
