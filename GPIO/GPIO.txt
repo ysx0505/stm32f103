@@ -1,0 +1,43 @@
+#GPIO库函数的使用
+
+##GPIO初始化流程及常用函数
+GPIO初始化流程
+GPIO_InitTypeDef GPIO_InitStructure;  //定义GPIO结构体
+RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE); //初始化GPIO外设时钟
+GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5; //选择要控制的引脚
+GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;  //选择输出方式，GPIO_Mode_Out_PP为推挽输出
+GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;  //选择引脚速率
+GPIO_Init(GPIOB, &GPIO_InitStructure); //初始化GPIO
+
+GPIO常用函数
+GPIO_DeInit(GPIOB); //GPIO反初始化，避免多次初始化导致初始化失败
+GPIO_AFIODeInit();  //GPIO复用功能反初始化
+GPIO_Init(GPIOB, &GPIO_InitStructure);  //初始化GPIO
+GPIO_StructInit(&GPIO_InitStructure); //使用默认值（2MHz，浮空输入）初始化某个GPIO口的所有引脚
+GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_5);  //获取某个GPIO口引脚输入的电平状态
+GPIO_ReadInputData(GPIOB);  //获取某个GPIO口的所有引脚输入的电平状态
+GPIO_ReadOutputDataBit(GPIOB,GPIO_Pin_5); //获取某个GPIO口引脚输出的电平状态。
+GPIO_ReadOutputData(GPIOB); //获取某个GPIO口所有引脚输出的电平状态
+GPIO_SetBits(GPIOB, GPIO_Pin_5);  //设置某个GPIO口引脚输出高电平
+GPIO_ResetBits(GPIOB, GPIO_Pin_5);  //设置某个GPIO口引脚输出低电平
+GPIO_WriteBit(GPIOB, GPIO_Pin_5, Bit_RESET);  //设置某个GPIO口引脚输出低（Bit_RESET）/高（Bit_SET）电平
+GPIO_Write(GPIOB, PortVal); //设置某个GPIO口所有引脚的输出电平
+GPIO_PinRemapConfig(GPIO_Remap, ENABLE);  //修改引脚的默认功能
+
+其余GPIO口函数
+GPIO_PinLockConfig(GPIOB, GPIO_Pin_5);  //锁定GPIO引脚配置寄存器
+GPIO_EventOutputConfig(GPIO_PortSource, GPIO_PinSource);  //选择用作事件输出的GPIO引脚
+GPIO_EventOutputCmd(ENABLE);  //启用或禁用事件输出
+GPIO_EXTILineConfig(GPIO_PortSource, GPIO_PinSource); //选择用作EXTI线的GPIO引脚
+GPIO_ETH_MediaInterfaceConfigGPIO_ETH_MediaInterface);  //选择以太网媒体接口
+
+ReadOutput和ReadInput的区别
+output:是读取从单片机内部输出到外部的电平，着重于单片机内部的设定，若引脚软件配置为1，则读回的值为1(即使外部将其拉低)
+input：读取从外部输入到单片机内部的电平，着重于外部输入电平，外部实际为1，则读回的值为1，反之为0
+
+
+## 寄存器控制GPIO口引脚
+GPIOx->BSRR=GPIO_Pin_x;	    //输出为高电平		
+GPIOx->BRR=GPIO_Pin_x;	    //输出低电平
+GPIOx->ODR ^=GPIO_Pin_x;    //输出反转状态
+
