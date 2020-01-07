@@ -6,14 +6,11 @@
 ;* Description        : STM32F10x High Density Devices vector table for MDK-ARM 
 ;*                      toolchain. 
 ;*                      This module performs:
-;*                      - Set the initial SP
-;*                      - Set the initial PC == Reset_Handler
-;*                      - Set the vector table entries with the exceptions ISR address
-;*                      - Configure the clock system and also configure the external 
-;*                        SRAM mounted on STM3210E-EVAL board to be used as data 
-;*                        memory (optional, to be enabled by user)
-;*                      - Branches to __main in the C library (which eventually
-;*                        calls main()).
+;*                      - 初始化堆栈指针SP
+;*                      - 初始化PC指针
+;*                      - 初始化中断向量表
+;*                      - 配置系统时钟
+;*                      - 调用C库函数_main，最终去到C的世界
 ;*                      After Reset the CortexM3 processor is in Thread mode,
 ;*                      priority is Privileged, and the Stack is set to Main.
 ;* <<< Use Configuration Wizard in Context Menu >>>   
@@ -26,34 +23,36 @@
 ; INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
 ;*******************************************************************************
 
+;1-栈
 ; Amount of memory (in bytes) allocated for Stack
 ; Tailor this value to your application needs
-; <h> Stack Configuration
+; <h> 栈配置，用于变量，函数调用
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Stack_Size      EQU     0x00000400
+Stack_Size      EQU     0x00000400    ; 1KB
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size
 __initial_sp
-                                                  
-; <h> Heap Configuration
+
+;2-堆                                                  
+; <h> 堆配置，用于malloc等函数的动态内存分配
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size       EQU     0x00000200
+Heap_Size       EQU     0x00000200   ;512B
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
 Heap_Mem        SPACE   Heap_Size
 __heap_limit
 
-                PRESERVE8
-                THUMB
+                PRESERVE8    ;当前堆栈8字节对齐
+                THUMB        ;兼容 THUMB 指令，老的指令，16bit，现在Cortex-M3的都是THUMB-2指令，兼容16/32位
 
-
-; Vector Table Mapped to Address 0 at Reset
+;3-向量表，存的是中断服务函数的名称，即地址
+; Vector Table Mapped to Address 0 at Reset，这里的0地址指的是FLASH的起始地址
                 AREA    RESET, DATA, READONLY
                 EXPORT  __Vectors
                 EXPORT  __Vectors_End
@@ -142,7 +141,7 @@ __Vectors_End
 __Vectors_Size  EQU  __Vectors_End - __Vectors
 
                 AREA    |.text|, CODE, READONLY
-                
+;4-复位程序               
 ; Reset handler
 Reset_Handler   PROC
                 EXPORT  Reset_Handler             [WEAK]
@@ -153,7 +152,8 @@ Reset_Handler   PROC
                 LDR     R0, =__main
                 BX      R0
                 ENDP
-                
+;5-中断服务程序，全部为空，需要自己在C程序里面另外实现，但是函数名字必须跟这里的一样
+;如果不一样，则会执行这里的中断服务函数，即无限循环，出现这样的错误很难发现                
 ; Dummy Exception Handlers (infinite loops which can be modified)
 
 NMI_Handler     PROC
@@ -326,11 +326,11 @@ DMA2_Channel4_5_IRQHandler
                 ENDP
 
                 ALIGN
-
+;6-用户堆栈初始化，由C库函数_main来完成
 ;*******************************************************************************
 ; User Stack and Heap initialization
 ;*******************************************************************************
-                 IF      :DEF:__MICROLIB
+                 IF      :DEF:__MICROLIB       ;这个宏在IDE里面配置
                 
                  EXPORT  __initial_sp
                  EXPORT  __heap_base
@@ -338,10 +338,10 @@ DMA2_Channel4_5_IRQHandler
                 
                  ELSE
                 
-                 IMPORT  __use_two_region_memory
+                 IMPORT  __use_two_region_memory ;这个函数需要用户自己实现
                  EXPORT  __user_initial_stackheap
                  
-__user_initial_stackheap
+__user_initial_stackheap  ; 
 
                  LDR     R0, =  Heap_Mem
                  LDR     R1, =(Stack_Mem + Stack_Size)
