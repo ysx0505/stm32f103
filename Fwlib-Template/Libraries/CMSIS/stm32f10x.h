@@ -18,7 +18,7 @@
   *          is using in the C source code, usually in main.c. This file contains:
   *           - Configuration section that allows to select:
   *              - The device used in the target application
-  *              - To use or not the peripheral抯 drivers in application code(i.e. 
+  *              - To use or not the peripheral's drivers in application code(i.e. 
   *                code will be based on direct access to peripheral抯 registers 
   *                rather than drivers API), this option is controlled by 
   *                "#define USE_STDPERIPH_DRIVER"
@@ -26,7 +26,7 @@
   *                crystal frequency
   *           - Data structures and the address mapping for all peripherals
   *           - Peripheral's registers declarations and bits definition
-  *           - Macros to access peripheral抯 registers hardware
+  *           - Macros to access peripheral's registers hardware
 		该文件是应用程序程序员在C源代码(通常在main.c中)中使用的惟一包含文件。
 		这个文件包含:
 			-配置部分，允许选择:
@@ -165,7 +165,7 @@
 	 在下列行中，调整外部高速振荡器(HSE)启动超时值
    */
 #define HSE_STARTUP_TIMEOUT   ((uint16_t)0x0500) /*!< Time out for HSE start up 
-																											HSE启动时间*/
+							HSE启动时间*/
 
 #define HSI_VALUE    ((uint32_t)8000000) /*!< Value of the Internal oscillator in Hz*/
 
