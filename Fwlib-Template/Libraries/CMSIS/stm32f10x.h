@@ -10,20 +10,33 @@
   *          High density, High density value line, Medium density, 
   *          Medium density Value line, Low density, Low density Value line 
   *          and XL-density devices.
+		CMSIS Cortex-M3设备层外部访问头文件。
+		该文件包含STM32F10x互联网线、大容量、大容量超值型、中容量、中容量超值型、
+		小容量、小容量超值型和超大容量设备的所有外围寄存器定义、位定义和内存映射
   *
   *          The file is the unique include file that the application programmer
   *          is using in the C source code, usually in main.c. This file contains:
   *           - Configuration section that allows to select:
   *              - The device used in the target application
-  *              - To use or not the peripheral�s drivers in application code(i.e. 
-  *                code will be based on direct access to peripheral�s registers 
+  *              - To use or not the peripheral抯 drivers in application code(i.e. 
+  *                code will be based on direct access to peripheral抯 registers 
   *                rather than drivers API), this option is controlled by 
   *                "#define USE_STDPERIPH_DRIVER"
   *              - To change few application-specific parameters such as the HSE 
   *                crystal frequency
   *           - Data structures and the address mapping for all peripherals
   *           - Peripheral's registers declarations and bits definition
-  *           - Macros to access peripheral�s registers hardware
+  *           - Macros to access peripheral抯 registers hardware
+		该文件是应用程序程序员在C源代码(通常在main.c中)中使用的惟一包含文件。
+		这个文件包含:
+			-配置部分，允许选择:
+				-用于目标应用程序的设备
+				-在应用程式程式码中使用或不使用外设驱动程式(例如代码将基于对外围寄存器的直接访问，而不是驱动程序API)。
+					此选项由宏“#define USE_STDPERIPH_DRIVER”控制
+				-改变少量特定于应用的参数，如HSE晶体频率
+			-所有外设的数据结构和地址映射
+			-外设的寄存器声明和位定义
+			-用于访问外设寄存器硬件的宏
   *
   ******************************************************************************
   * @attention
@@ -60,6 +73,7 @@
   
 /* Uncomment the line below according to the target STM32 device used in your
    application 
+	 根据您使用的STM32设备取消注释下面的行
   */
 
 #if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD) && !defined (STM32F10X_HD_VL) && !defined (STM32F10X_XL) && !defined (STM32F10X_CL) 
@@ -74,22 +88,45 @@
 #endif
 /*  Tip: To avoid modifying this file each time you need to switch between these
         devices, you can define the device in your toolchain compiler preprocessor.
-
+		为了避免在每次需要在这些文件之间切换时修改这个文件设备，可以在工具链编译器预处理器中定义设备。
+		
  - Low-density devices are STM32F101xx, STM32F102xx and STM32F103xx microcontrollers
    where the Flash memory density ranges between 16 and 32 Kbytes.
+		小容量型设备有STM32F101xx、STM32F102xx和STM32F103xx单片机
+		其flash大小在16到32k字节之间。
+		
  - Low-density value line devices are STM32F100xx microcontrollers where the Flash
    memory density ranges between 16 and 32 Kbytes.
+	 小容量超值型设备有STM32F100xx单片机
+	 其flash大小在16到32k字节之间。
+	 
  - Medium-density devices are STM32F101xx, STM32F102xx and STM32F103xx microcontrollers
    where the Flash memory density ranges between 64 and 128 Kbytes.
+	 中容量型设备有STM32F101xx、STM32F102xx和STM32F103xx单片机
+	 其flash大小在64到128k字节之间。
+	 
  - Medium-density value line devices are STM32F100xx microcontrollers where the 
-   Flash memory density ranges between 64 and 128 Kbytes.   
+   Flash memory density ranges between 64 and 128 Kbytes.  
+	 中容量超值型设备有STM32F100xx单片机
+	 其flash大小在64到128k字节之间。
+
  - High-density devices are STM32F101xx and STM32F103xx microcontrollers where
    the Flash memory density ranges between 256 and 512 Kbytes.
+	 大容量型设备有STM32F101xx和STM32F103xx单片机
+	 其flash大小在256到512k字节之间。
+	 
  - High-density value line devices are STM32F100xx microcontrollers where the 
-   Flash memory density ranges between 256 and 512 Kbytes.   
+   Flash memory density ranges between 256 and 512 Kbytes.  
+	 大容量超值型设备有STM32F100xx单片机
+	 其flash大小在256到512k字节之间。
+
  - XL-density devices are STM32F101xx and STM32F103xx microcontrollers where
    the Flash memory density ranges between 512 and 1024 Kbytes.
+	 超大容量设备有STM32F101xx和STM32F103xx单片机
+	 其flash大小在512到1024k字节之间。
+	 
  - Connectivity line devices are STM32F105xx and STM32F107xx microcontrollers.
+	 互联网型设备有STM32F105xx和STM32F107xx单片机
   */
 
 #if !defined (STM32F10X_LD) && !defined (STM32F10X_LD_VL) && !defined (STM32F10X_MD) && !defined (STM32F10X_MD_VL) && !defined (STM32F10X_HD) && !defined (STM32F10X_HD_VL) && !defined (STM32F10X_XL) && !defined (STM32F10X_CL)
@@ -108,9 +145,10 @@
 /**
  * @brief In the following line adjust the value of External High Speed oscillator (HSE)
    used in your application 
-   
+   在下列行中调整外部高速振荡器(HSE)的值以便应用程序中使用
    Tip: To avoid modifying this file each time you need to use different HSE, you
         can define the HSE value in your toolchain compiler preprocessor.
+	 为了避免在每次需要使用不同的HSE时都要修改此文件，您可以在工具链编译器预处理器中定义HSE值。
   */           
 #if !defined  HSE_VALUE
  #ifdef STM32F10X_CL   
@@ -124,9 +162,10 @@
 /**
  * @brief In the following line adjust the External High Speed oscillator (HSE) Startup 
    Timeout value 
+	 在下列行中，调整外部高速振荡器(HSE)启动超时值
    */
 #define HSE_STARTUP_TIMEOUT   ((uint16_t)0x0500) /*!< Time out for HSE start up 
-																											HSE����ʱ��*/
+																											HSE启动时间*/
 
 #define HSI_VALUE    ((uint32_t)8000000) /*!< Value of the Internal oscillator in Hz*/
 
